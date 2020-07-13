@@ -6,7 +6,7 @@ client.on('ready', () => {
 });
 
 client.on('message', message => {
-    if (message.channel.type === 'dm'){
+    if (message.channel.type === 'dm' && !message.author.bot){
         message.reply('Added!')
     }
 })
