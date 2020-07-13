@@ -11,6 +11,14 @@ client.on('ready', () => {
     console.log(`Logged in as ${client.user.tag}`)
 });
 
+async function retrieveFromDatabase(collection_name, message){
+    const dbConnection = await dbClient.connect();
+    const wordsDatabase = dbConnection.db(databaseName)
+    const allObjects = await wordsDatabase.collection(collection_name).find(true).toArray();
+    const stringifiedObjects = allObjects.map(item => item.content).join(', ')
+    message.reply(stringifiedObjects)
+}
+
 async function sendToDatabase(author, content, collection_name, message){
     const dbConnection = await dbClient.connect();
     const wordsDatabase = dbConnection.db(databaseName)
@@ -39,13 +47,19 @@ client.on('message', async (message) => {
                 .setAuthor('Help - Commands', '', 'https://discord.js.org')
                 .addFields(
                     { name: 'skribbl add [TEXT_HERE]', value: 'Adds to the database of skribbl words!' },
-                    { name: 'cah add [TEXT_HERE]', value: 'Adds to the database of cards against humanity words!' }
+                    { name: 'skribbl retrieve', value: 'Returns back all words currently in the skribbl database!' },
+                    { name: 'cah add [TEXT_HERE]', value: 'Adds to the database of cards against humanity words!' },
+                    { name: 'cah retrieve', value: 'Returns back all words currently in the cards against humanity database!' }
                 )
             message.reply(helpEmbed)
         }else if (message.content.match(/skribbl add.*/)){
             sendToDatabase(message.author, message.content, 'skribbl', message)
         }else if (message.content.match(/cah add.*/)){
             sendToDatabase(message.author, message.content, 'cah', message)
+        }else if(message.content === 'skribbl retrieve'){
+            retrieveFromDatabase('skribbl', message)
+        }else if(message.content === 'cah retrieve'){
+            retrieveFromDatabase('cah', message)
         }else{
             message.reply('That is not a valid command! see help')
         }
