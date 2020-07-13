@@ -29,7 +29,7 @@ async function purge(collection_name, message){
     if(isHigherAccessLevel(message)){
         const dbConnection = await dbClient.connect();
         const wordsDatabase = dbConnection.db(databaseName)
-        const deleted = (await wordsDatabase.collection(collection_name).deleteMany(true)).result
+        const deleted = (await wordsDatabase.collection(collection_name).deleteMany({})).result
         if(deleted.ok){
             message.reply(`All items have been purged from the collection! ${deleted.n}`)
         } else {
