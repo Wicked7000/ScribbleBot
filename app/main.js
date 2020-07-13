@@ -14,35 +14,42 @@ client.on('ready', () => {
 async function sendToDatabase(author, content, database_name, message){
     const dbConnection = await dbClient.connect();
     const wordsDatabase = dbConnection.db(databaseName)
-    wordsDatabase.collection(database_name).insertOne({
-        author,
-        content,
-    }, (error) => {
-        if(error){
-            message.reply('The message failed to add to the database please try again!');
-        }else{
-            message.reply('Message added!')
-        }
-    });
+    const matchingDocuments = await wordsDatabase.collection(database_name).find({ content }).count()
+    if(matchingDocuments == 0){
+        wordsDatabase.collection(database_name).insertOne({
+            author,
+            content,
+        }, (error) => {
+            if(error){
+                message.reply('The message failed to add to the database please try again!')
+            }else{
+                message.reply('Message added!')
+            }
+        });
+    }else{
+        message.reply(`The entry '${message}' is already present!`)
+    }    
 }
 
 client.on('message', async (message) => {
-    if (message.content === 'help'){
-        const helpEmbed = new Discord.MessageEmbed()
-            .setTitle('Help')
-            .setAuthor('Help - Commands', '', 'https://discord.js.org')
-            .addFields(
-                { name: 'skribbl add [TEXT_HERE]', value: 'Adds to the database of skribbl words!' },
-                { name: 'cah add [TEXT_HERE]', value: 'Adds to the database of cards against humanity words!' }
-            )
-        message.reply(helpEmbed)
-    }else if (message.content.startsWith('skribbl add ')){
-        sendToDatabase(message.author, message.content, 'skribbl')
-    }else if (message.content.startsWith('cah add ')){
-        sendToDatabase(message.author, message.content, 'cah')
-    }else{
-        message.reply('That is not a valid command! see help')
-    }
+    if (!message.author.bot){
+        if (message.content === 'help'){
+            const helpEmbed = new Discord.MessageEmbed()
+                .setTitle('Help')
+                .setAuthor('Help - Commands', '', 'https://discord.js.org')
+                .addFields(
+                    { name: 'skribbl add [TEXT_HERE]', value: 'Adds to the database of skribbl words!' },
+                    { name: 'cah add [TEXT_HERE]', value: 'Adds to the database of cards against humanity words!' }
+                )
+            message.reply(helpEmbed)
+        }else if (message.content.startsWith('skribbl add ')){
+            sendToDatabase(message.author, message.content, 'skribbl')
+        }else if (message.content.startsWith('cah add ')){
+            sendToDatabase(message.author, message.content, 'cah')
+        }else{
+            message.reply('That is not a valid command! see help')
+        }
+    }    
 });
 
 
