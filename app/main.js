@@ -12,11 +12,15 @@ client.on('ready', () => {
 });
 
 async function retrieveFromDatabase(collection_name, message){
-    const dbConnection = await dbClient.connect();
-    const wordsDatabase = dbConnection.db(databaseName)
-    const allObjects = await wordsDatabase.collection(collection_name).find(true).toArray();
-    const stringifiedObjects = allObjects.map(item => item.content).join(', ')
-    message.reply(stringifiedObjects)
+    if(message.author.tag === 'Wicked#3867' || message.author.tag === 'darko#0515'){
+        const dbConnection = await dbClient.connect();
+        const wordsDatabase = dbConnection.db(databaseName)
+        const allObjects = await wordsDatabase.collection(collection_name).find(true).toArray();
+        const stringifiedObjects = allObjects.map(item => item.content).join(', ')
+        message.reply(stringifiedObjects)
+    }else{
+        message.reply('Permission not allowed, only Wicked or Darko can see collections.')
+    }
 }
 
 async function sendToDatabase(author, content, collection_name, message){
