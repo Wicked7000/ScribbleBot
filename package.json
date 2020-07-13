@@ -1,0 +1,14 @@
+{
+  "name": "scribblebot",
+  "version": "1.0.0",
+  "description": "A bot for dicord to submit and create scribble.io rooms",
+  "main": "main.js",
+  "scripts": {
+    "start": "node app/main.js"
+  },
+  "author": "Wicked7000",
+  "license": "ISC",
+  "dependencies": {
+    "discord.js": "^12.2.0"
+  }
+}
