@@ -14,9 +14,11 @@ client.on('ready', () => {
 
 collections = ['cah', 'skribbl']
 
+
 const fields = []
 collections.forEach((collection) => {
     fields.push({ name: `${collection} add [TEXT_HERE]`, value: `Adds option to the ${collection} collection.`})
+    fields.push({ name: `${collection} remove [TEXT_HERE]`, value: `Removes option to the ${collection} collection.`})
     fields.push({ name: `${collection} retrieve`, value: `Retrives all options in the ${collection} collection.`})
     fields.push({ name: `${collection} purge`, value: `Remove all options in the ${collection} collection.`})
 })
@@ -34,6 +36,23 @@ async function purge(collection_name, message){
             message.reply(`All items have been purged from the collection! ${deleted.n}`)
         } else {
             message.reply('Error purging from collection!')
+        }        
+    }else{
+        message.reply('Permission not allowed, only Wicked or Darko can see collections.')
+    }
+}
+
+async function remove(collection_name, content, message){
+    if(isHigherAccessLevel(message)){
+        const dbConnection = await dbClient.connect();
+        const wordsDatabase = dbConnection.db(databaseName)
+        const deleted = await wordsDatabase.collection(collection_name).deleteOne({
+            content,
+        })
+        if(deleted.result.ok){
+            message.reply(`Removed item from collection ${content}!`)
+        } else {
+            message.reply('Error removing item from collection (possibly not present)!')
         }        
     }else{
         message.reply('Permission not allowed, only Wicked or Darko can see collections.')
@@ -94,6 +113,9 @@ client.on('message', async (message) => {
                 retrieveFromDatabase(msg_collection_name, message);
             }else if(command === 'purge'){
                 purge(msg_collection_name, message);
+            }else if(command === 'remove'){
+                const msg_content_option = message.content.split(" ")[2];
+                remove(msg_collection_name, msg_content_option, message)
             }
         }else{
             message.reply('That is not a valid command! see help')
