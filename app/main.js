@@ -14,8 +14,8 @@ client.on('ready', () => {
 async function sendToDatabase(author, content, collection_name, message){
     const dbConnection = await dbClient.connect();
     const wordsDatabase = dbConnection.db(databaseName)
-    const matchingDocuments = await wordsDatabase.collection(collection_name).findOne({ content });
-    if(matchingDocuments == 0){
+    const matchingDocument = await wordsDatabase.collection(collection_name).findOne({ content });
+    if(!matchingDocument){
         wordsDatabase.collection(collection_name).insertOne({
             author,
             content,
