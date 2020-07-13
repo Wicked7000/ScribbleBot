@@ -15,7 +15,7 @@ client.on('message', async (message) => {
     if (message.channel.type === 'dm' && !message.author.bot){
         message.reply('Attempting to add!')
         
-        const dbConnection = dbClient.connect();
+        const dbConnection = await dbClient.connect();
         const wordsDatabase = dbConnection.db(databaseName)
         wordsDatabase.collection('scribbleio').insertOne({
             author: message.author.tag,
