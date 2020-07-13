@@ -42,9 +42,9 @@ client.on('message', async (message) => {
                     { name: 'cah add [TEXT_HERE]', value: 'Adds to the database of cards against humanity words!' }
                 )
             message.reply(helpEmbed)
-        }else if (message.content.startsWith('skribbl add ')){
+        }else if (message.content.match(/skribbl add.*/)){
             sendToDatabase(message.author, message.content, 'skribbl')
-        }else if (message.content.startsWith('cah add ')){
+        }else if (message.content.match(/cah add.*/)){
             sendToDatabase(message.author, message.content, 'cah')
         }else{
             message.reply('That is not a valid command! see help')
