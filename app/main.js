@@ -14,8 +14,8 @@ client.on('ready', () => {
 async function sendToDatabase(author, content, collection_name, message){
     const dbConnection = await dbClient.connect();
     const wordsDatabase = dbConnection.db(databaseName)
-    const matchingDocuments = await wordsDatabase.collection(collection_name).find({ content }).count()
-    if(matchingDocuments == 0){
+    //const matchingDocuments = await wordsDatabase.collection(collection_name).find({ content }).count()
+    //if(matchingDocuments == 0){
         wordsDatabase.collection(collection_name).insertOne({
             author,
             content,
@@ -26,9 +26,9 @@ async function sendToDatabase(author, content, collection_name, message){
                 message.reply('Message added!')
             }
         });
-    }else{
-        message.reply(`The entry '${message}' is already present!`)
-    }    
+    //}else{
+        //message.reply(`The entry '${message}' is already present!`)
+    //}    
 }
 
 client.on('message', async (message) => {
