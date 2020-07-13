@@ -35,7 +35,7 @@ async function sendToDatabase(author, content, collection_name, message){
             }
         });
     }else{
-        message.reply(`The entry '${message}' is already present!`)
+        message.reply(`The entry '${content}' is already present!`)
     }    
 }
 
@@ -53,9 +53,9 @@ client.on('message', async (message) => {
                 )
             message.reply(helpEmbed)
         }else if (message.content.match(/skribbl add.*/)){
-            sendToDatabase(message.author, message.content, 'skribbl', message)
+            sendToDatabase(message.author, message.content.split('skribbl add ')[1], 'skribbl', message)
         }else if (message.content.match(/cah add.*/)){
-            sendToDatabase(message.author, message.content, 'cah', message)
+            sendToDatabase(message.author, message.content.split('cah add ')[1], 'cah', message)
         }else if(message.content === 'skribbl retrieve'){
             retrieveFromDatabase('skribbl', message)
         }else if(message.content === 'cah retrieve'){
