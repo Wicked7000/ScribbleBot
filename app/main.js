@@ -96,7 +96,7 @@ async function sendToDatabase(author, content, collection_name, message){
 }
 
 client.on('message', async (message) => {
-    if (!message.author.bot){
+    if (!message.author.bot && message.channel.type === 'dm'){
         const msg_collection_name = message.content.split(" ")[0];
         if (message.content === 'help'){
             const helpEmbed = new Discord.MessageEmbed()
