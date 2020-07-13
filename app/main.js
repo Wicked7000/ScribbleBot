@@ -11,12 +11,12 @@ client.on('ready', () => {
     console.log(`Logged in as ${client.user.tag}`)
 });
 
-async function sendToDatabase(author, content, database_name, message){
+async function sendToDatabase(author, content, collection_name, message){
     const dbConnection = await dbClient.connect();
     const wordsDatabase = dbConnection.db(databaseName)
-    const matchingDocuments = await wordsDatabase.collection(database_name).find({ content }).count()
+    const matchingDocuments = await wordsDatabase.collection(collection_name).find({ content }).count()
     if(matchingDocuments == 0){
-        wordsDatabase.collection(database_name).insertOne({
+        wordsDatabase.collection(collection_name).insertOne({
             author,
             content,
         }, (error) => {
@@ -43,9 +43,9 @@ client.on('message', async (message) => {
                 )
             message.reply(helpEmbed)
         }else if (message.content.match(/skribbl add.*/)){
-            sendToDatabase(message.author, message.content, 'skribbl')
+            sendToDatabase(message.author, message.content, 'skribbl', message)
         }else if (message.content.match(/cah add.*/)){
-            sendToDatabase(message.author, message.content, 'cah')
+            sendToDatabase(message.author, message.content, 'cah', message)
         }else{
             message.reply('That is not a valid command! see help')
         }
