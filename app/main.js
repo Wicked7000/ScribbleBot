@@ -107,14 +107,14 @@ client.on('message', async (message) => {
         }else if (collections.includes(msg_collection_name)){
             const command = message.content.split(" ")[1]
             if(command === 'add'){
-                const msg_content_option = message.content.split(" ")[2];
+                const msg_content_option = message.content.split("add ")[1]
                 sendToDatabase(message.author, msg_content_option, msg_collection_name, message)
             }else if(command === 'retrieve'){
                 retrieveFromDatabase(msg_collection_name, message);
             }else if(command === 'purge'){
                 purge(msg_collection_name, message);
             }else if(command === 'remove'){
-                const msg_content_option = message.content.split(" ")[2];
+                const msg_content_option = message.content.split("remove ")[1]
                 remove(msg_collection_name, msg_content_option, message)
             }
         }else{
