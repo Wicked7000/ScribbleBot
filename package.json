@@ -1,16 +1,22 @@
 {
-  "name": "scribblebot",
+  "name": "pandabot",
   "version": "1.0.0",
-  "description": "A bot for dicord to submit and create scribble.io rooms",
+  "description": "A bot specifically made for Save the Pandas",
   "main": "app/main.js",
   "scripts": {
-    "start": "node app/main.js"
+    "start": "node ./build/main.js",
+    "build": "tsc"
   },
   "author": "Wicked7000",
   "license": "ISC",
   "dependencies": {
+    "@types/mongodb": "^3.5.25",
     "discord.js": "^12.2.0",
     "mongodb": "^3.5.9",
-    "request": "2.81.0"
+    "request": "2.81.0",
+    "typescript": "^3.9.6"
+  },
+  "devDependencies": {
+    "@types/node": "^14.0.26"
   }
 }
