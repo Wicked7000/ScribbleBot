@@ -5,7 +5,7 @@ import Behaviour, { HandlerType, MatcherFunction } from './Behaviour';
 
 const handlerBanEveryone: HandlerType = async (manager: DiscordManager, message: Message) => {
     message.delete();
-    message.reply('Please do not use @everyone!');
+    message.reply('Please do not use \`@everyone\`!');
 }
 
 const testFn: MatcherFunction = (message: Message) => {

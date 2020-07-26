@@ -2,7 +2,6 @@ import banEveryone from "./banEveryone";
 import { Message } from "discord.js";
 import Behaviour from "./Behaviour";
 import DiscordManager from "../DiscordManager";
-import StateObject from "../state/StateObject";
 
 export default class BehaviourHandler{
     private behaviours: Behaviour[];
