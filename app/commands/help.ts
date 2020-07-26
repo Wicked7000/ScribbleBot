@@ -23,5 +23,5 @@ const testFn: MatcherFunction = (message: Message) => {
     return /help/.test(message.content);
 }
 
-const addCommand = new Command('help', 'you just ran this command good job :)', testFn, handlerHelp);
+const addCommand = new Command('help', 'dm', 'you just ran this command good job :)', testFn, handlerHelp);
 export default addCommand;

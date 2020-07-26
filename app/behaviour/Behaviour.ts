@@ -1,32 +1,25 @@
 import Discord from 'discord.js';
 import DiscordManager from '../DiscordManager';
-import StateObject from '../state/StateObject';
 
-type CommandType = 'dm' | 'text' | 'both';
-export type HandlerType = (manager: DiscordManager, message: Discord.Message, stateObject: StateObject) => void;
+type BehaviourType = 'dm' | 'text';
+export type HandlerType = (manager: DiscordManager, message: Discord.Message) => void;
 export type MatcherFunction = (message: Discord.Message) => boolean;
 
-export default class Command{
+export default class Behaviour{
     private name: string;
-    private type: CommandType;
-    private description: string;
+    private type: BehaviourType;
     private matcher: MatcherFunction;
     private handler: HandlerType;
 
-    constructor(name: string, type: CommandType, description: string, matcher: MatcherFunction, handler: HandlerType){
+    constructor(name: string, type: BehaviourType, matcher: MatcherFunction, handler: HandlerType){
         this.name = name;
         this.type = type;
-        this.description = description;
         this.matcher = matcher;
         this.handler = handler;
     }
 
     public getName(){
         return this.name;
-    }
-
-    public getDescription(){
-        return this.description;
     }
 
     public getMatcher(){

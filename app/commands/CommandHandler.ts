@@ -26,7 +26,7 @@ export default class CommandHandler{
     public matchCommand(message: Message){
         for(const command of this.commands){
             const matcherFn = command.getMatcher();
-            if(matcherFn(message)){
+            if(matcherFn(message) && message.channel.type === command.getType()){
                 return command
             }
         }

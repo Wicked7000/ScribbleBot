@@ -1,17 +1,20 @@
 import { PossibleStates } from "./StateManager";
-import { HandlerType } from "../commands/Command";
+import Command, { HandlerType } from "../commands/Command";
 import { clearTimeout } from "timers";
 import { User } from "discord.js";
+import Behaviour from "../behaviour/Behaviour";
 
-export default class StateObject{
-    private readonly stateType: PossibleStates;
+export default class StateObject{    
     private readonly user: User;
     private readonly nextHandler?: HandlerType;
     private readonly timeoutId?: NodeJS.Timeout;
+    private readonly command: Command;
+    private stateType: PossibleStates;
     private currentState: any;
     
-    constructor(user: User, stateType: PossibleStates, timeoutId?: NodeJS.Timeout, nextHandler?: HandlerType){
+    constructor(user: User, command: Command, stateType: PossibleStates, timeoutId?: NodeJS.Timeout, nextHandler?: HandlerType){
         this.user = user;
+        this.command = command;
         this.stateType = stateType;
         this.nextHandler = nextHandler;
         this.timeoutId = timeoutId;
@@ -36,8 +39,16 @@ export default class StateObject{
  
     }
 
+    public getCommand(): Command{
+        return this.command;
+    }
+
     public getState(): Readonly<any> {
         return this.currentState;
+    }
+
+    public updateStateType(newType: PossibleStates){
+        this.stateType = newType;
     }
 
     public updateState(newState: any){

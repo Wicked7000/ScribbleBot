@@ -3,6 +3,8 @@ import { PURGE_REQUEST_ACCEPTED, PURGE_REQUEST_CANCELLED, PURGE_REQUEST_RECIEVED
 import Command, { HandlerType } from "../commands/Command";
 import StateObject from "./StateObject";
 import DiscordManager from "../DiscordManager";
+import CommandHandler from "../commands/CommandHandler";
+import BehaviourHandler from "../behaviour/BehaviourHandler";
 
 export const NO_CONVERSATION = "NO_CONVERSATION";
 export const START_OF_CONVERSATION = "START_OF_CONVERSATION";
@@ -21,12 +23,22 @@ const DEFAULT_MESSAGE_EXPIRY_TIME_IN_SECONDS = 10000;
 
 export class StateManager{
     private readonly discordManager: DiscordManager;
+    private readonly commandHandler: CommandHandler;
+    private readonly behaviourHandler: BehaviourHandler;
     private conversationStates: Map<Snowflake, StateObject>;
 
 
     constructor(discordManager: DiscordManager){
         this.conversationStates = new Map();
         this.discordManager = discordManager;
+        this.commandHandler = discordManager.getCommandHandler();
+        this.behaviourHandler = discordManager.getBehaviourHandler();
+
+        this.handleMessage = this.handleMessage.bind(this);
+        this.newConversation = this.newConversation.bind(this);
+        this.continueConversation = this.continueConversation.bind(this);
+        this.updateState = this.updateState.bind(this);
+        this.getState = this.getState.bind(this);
     }
 
     private purgeConversation(userid: Snowflake){
@@ -37,22 +49,26 @@ export class StateManager{
     }
 
     public handleMessage(message: Message){
-        if(this.conversationStates.has(message.author.id)){            
-            this.continueConversation(message);
-        }else{
-            const matchedCommand = this.discordManager.getCommandHandler().matchCommand(message);
-            if(matchedCommand && !this.conversationStates.has(message.author.id)){            
-                this.newConversation(message, matchedCommand);
-            } else { 
-                message.reply('That is not a valid command! Please see help for more info')
-            }      
+        if(!message.author.bot){
+            if(this.conversationStates.has(message.author.id)){            
+                this.continueConversation(message);
+            }else{
+                this.behaviourHandler.executeBehaviour(this.discordManager, message);
+    
+                const matchedCommand = this.commandHandler.matchCommand(message);
+                if(matchedCommand && !this.conversationStates.has(message.author.id)){            
+                    this.newConversation(message, matchedCommand);
+                }else if(message.channel.type === 'dm'){
+                    message.reply('That is not a valid command, Please see the \`help\` command!');
+                }
+            }        
         }        
     }
 
     public newConversation(message: Message, command: Command){
         const handlerFunction = command.getHandler();
         console.log(`Started conversation with user - ${message.author.tag}`);
-        const newStateObject = new StateObject(message.author, START_OF_CONVERSATION);
+        const newStateObject = new StateObject(message.author, command, START_OF_CONVERSATION);
         this.conversationStates.set(message.author.id, newStateObject);        
         handlerFunction(this.discordManager, message, newStateObject);
     }
@@ -60,7 +76,7 @@ export class StateManager{
     public continueConversation(message: Message){
         const stateObject = this.conversationStates.get(message.author.id);
         const nextHandler = stateObject?.getNextHandler();
-        if(stateObject && nextHandler){
+        if(stateObject && nextHandler && message.channel.type === stateObject.getCommand().getType()){
             nextHandler(this.discordManager, message, stateObject);
         }
     }
@@ -76,11 +92,11 @@ export class StateManager{
             this.conversationStates.delete(message.author.id);
         } else {
             const currentStateObject = this.conversationStates.get(message.author.id);
-            const newStateObject = new StateObject(message.author, state, timeoutId, nextStateHandler);
             if(currentStateObject){
-                newStateObject.updateState(currentStateObject.getState());
+                currentStateObject.updateState(currentStateObject.getState());
+                currentStateObject.updateStateType(state);
+                this.conversationStates.set(message.author.id, currentStateObject);
             }
-            this.conversationStates.set(message.author.id, newStateObject);
         }
     }
 

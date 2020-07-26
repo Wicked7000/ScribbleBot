@@ -62,5 +62,5 @@ const testFn: MatcherFunction = (message: Message) => {
     return /purge \w+/.test(message.content);
 }
 
-const purgeCommand = new Command('purge', 'purges the specified collection', testFn, purgeHandlerStart);
+const purgeCommand = new Command('purge', 'dm', 'purges the specified collection', testFn, purgeHandlerStart);
 export default purgeCommand;

@@ -29,5 +29,5 @@ const testFn: MatcherFunction = (message: Message) => {
     return /retrieve \w+/.test(message.content);
 }
 
-const retrieveCommand = new Command('retrieve', 'Retrieves all messages from a collection', testFn, handlerRetrieve);
+const retrieveCommand = new Command('retrieve', 'dm', 'Retrieves all messages from a collection', testFn, handlerRetrieve);
 export default retrieveCommand;

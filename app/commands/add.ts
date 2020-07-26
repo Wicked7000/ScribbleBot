@@ -40,5 +40,5 @@ const testFn: MatcherFunction = (message: Message) => {
     return /add \w+ .*/.test(message.content);
 }
 
-const addCommand = new Command('add', 'Adds a message to the specified collection', testFn, handlerAdd);
+const addCommand = new Command('add', 'dm', 'Adds a message to the specified collection', testFn, handlerAdd);
 export default addCommand;
